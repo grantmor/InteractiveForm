@@ -1,3 +1,11 @@
+//MOVE OTHER HANDLES INTO GLOBAL SCOPE
+var $creditMenu = $('#payment');
+
+var $creditCard = $('#credit-card');
+var $paypal =  $creditCard.next();
+var $bitcoin = $paypal.next();
+
+
 function appendOtherTitle() {
   var $text = $('<label for="other-title">Other title:</label>' +
                  '<input type="text" id="other-title"' +
@@ -36,6 +44,7 @@ function getEventTime(eventText) {
   return eventTime;
 }
 
+// use reduce?
 function arraysEqual(one, two) {
   if (one.length !== two.length) return false;
 
@@ -46,9 +55,11 @@ function arraysEqual(one, two) {
 }
 
 function initializePayment() {
-  var $creditCard = $('#credit-card');
-  var $paypal =  $creditCard.next();
-  var $bitcoin = $paypal.next(); 
+
+  $creditMenu.val('credit card');
+
+  $paypal.hide();
+  $bitcoin.hide();
 }
 
 function initializePage() {
@@ -104,6 +115,29 @@ function initializePage() {
     });
 
     initializePayment();
+
+    // payment menu
+    $creditMenu.on('change', function () {
+      switch($creditMenu.val()) {
+        case 'credit card':
+          $paypal.hide();
+          $bitcoin.hide();
+          $creditCard.show();
+          break;
+        case 'paypal':
+          $creditCard.hide();
+          $bitcoin.hide();
+          $paypal.show();
+          break;
+        case 'bitcoin':
+          $paypal.hide();
+          $creditCard.hide();
+          $bitcoin.show();
+          break;
+        default:
+          break;
+      }
+    });
 }
 
 initializePage();
