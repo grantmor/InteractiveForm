@@ -139,7 +139,6 @@ function handlePaymentOptions() {
 }
 
 // Form Validation
-
 function validateName() {
   var $nameLabel = $('label[for="name"]');
   var errorString = ' (please provide your name)';
@@ -172,7 +171,19 @@ function validateEmail() {
 }
 
 function validateActivities() {
+  var $errorLabel = $('<label id="activity-error">Please select an Activity</label>');
+  var $checkedBoxes = $('.activities input[type="checkbox"]:checked');
 
+  $errorLabel.css('color', 'darkred');
+  $errorLabel.css('margin-bottom', '1.5em');
+
+  if ($checkedBoxes.length < 1 && $('#activity-error').length < 1) {
+    console.log('no checked boxes');
+    $('.activities legend:first').after($errorLabel);
+  } else if ($checkedBoxes.length > 0){
+    console.log('one or more boxes checked');
+    $('#activity-error').remove();
+  }
 }
 
 function validatePayment() {
