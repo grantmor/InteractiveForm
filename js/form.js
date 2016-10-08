@@ -1,10 +1,15 @@
 //MOVE OTHER HANDLES INTO GLOBAL SCOPE
-var $creditMenu = $('#payment');
+var $paymentMenu = $('#payment');
 var $activities = $('.activities input[type="checkbox"]');
 
 var $creditCard = $('#credit-card');
 var $paypal =  $creditCard.next();
 var $bitcoin = $paypal.next();
+
+var $form = $('form');
+
+// disable browser form validation
+$form.attr('novalidate', 'novalidate');
 
 
 function appendOtherTitle() {
@@ -24,6 +29,7 @@ function createValueString(optionVal) {
   var valueString = '[value="' + optionVal + '"]';
   return valueString;
 }
+
 function selectWithValue(valueString) {
   var $colorMenu = $('#color');
   $colorMenu.children(createValueString(valueString)).show();
@@ -57,7 +63,7 @@ function arraysEqual(one, two) {
 
 function initializePayment() {
 
-  $creditMenu.val('credit card');
+  $paymentMenu.val('credit card');
 
   $paypal.hide();
   $bitcoin.hide();
@@ -111,7 +117,7 @@ function handleEventConflicts() {
 }
 
 function handlePaymentOptions() {
-  switch($creditMenu.val()) {
+  switch($paymentMenu.val()) {
     case 'credit card':
       $paypal.hide();
       $bitcoin.hide();
@@ -132,6 +138,55 @@ function handlePaymentOptions() {
   }
 }
 
+// Form Validation
+
+function validateName() {
+  var $nameLabel = $('label[for="name"]');
+  var errorString = ' (please provide your name)';
+  var nameLblText = 'Name:';
+
+  if ($('#name').val() === '') {
+    $nameLabel.text(nameLblText + errorString);
+    $nameLabel.css('color', 'darkred');
+  } else {
+    $nameLabel.text('Name:');
+    $nameLabel.css('color', 'black');
+  }
+}
+
+function validateEmail() {
+  var $email = $('#mail');
+  var $emailLabel = $email.prev();
+  var emailLblText= 'Email:';
+  var errorString = ' (please provide a valid email address)';
+  var email = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
+
+  if (!$email.val().match(email)) {
+    $emailLabel.text(emailLblText + errorString);
+    $emailLabel.css('color', 'darkred');
+  } else {
+    $emailLabel.text('Email:');
+    $emailLabel.css('color', 'black');
+  }
+
+}
+
+function validateActivities() {
+
+}
+
+function validatePayment() {
+
+}
+
+function validatePage(evt) {
+  evt.preventDefault();
+  validateName();
+  validateEmail();
+  validateActivities();
+  validatePayment();
+}
+
 function initializePage() {
   $('#name').focus();
 
@@ -145,7 +200,11 @@ function initializePage() {
   initializePayment();
 
   // payment menu
-  $creditMenu.on('change', handlePaymentOptions);
+  $paymentMenu.on('change', handlePaymentOptions);
+
+  // form Validation
+  $form.submit(validatePage);
+
 }
 
 initializePage();
