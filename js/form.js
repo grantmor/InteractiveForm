@@ -1,5 +1,6 @@
 //MOVE OTHER HANDLES INTO GLOBAL SCOPE
 var $creditMenu = $('#payment');
+var $activities = $('.activities input[type="checkbox"]');
 
 var $creditCard = $('#credit-card');
 var $paypal =  $creditCard.next();
@@ -62,82 +63,89 @@ function initializePayment() {
   $bitcoin.hide();
 }
 
+function handleDesign() {
+  var dMenuVal = $('#design').val();
+  var $colorMenu = $('#color');
+
+  if ( dMenuVal === 'js puns') {
+    $colorMenu.children().hide();
+    selectWithValue('cornflowerblue');
+    selectWithValue('darkslategrey');
+    selectWithValue('dimgrey');
+    $colorMenu.val('cornflowerblue');
+  } else if (dMenuVal === 'heart js') {
+    $colorMenu.children().hide();
+    selectWithValue('tomato');
+    selectWithValue('steelblue');
+    selectWithValue('dimgrey');
+    $colorMenu.val('tomato');
+  } else {
+    $colorMenu.children().show();
+  }
+}
+
+function handleOtherJob() {
+  if($('#title').val() === 'other' && $('#other-title').length === 0) {
+    appendOtherTitle();
+  } else {
+    removeOtherTitle();
+  }
+}
+
+function handleEventConflicts() {
+  // remember which event was clicked
+  var eventIndex = $(this).parent().index();
+  // grab day and time from event option
+  var eventSetting = getEventTime($(this).parent().text()).sort();
+
+  function checkForConflict() {
+    // if an event overlaps and this isnt the box that was clicked
+    var eachEvent = getEventTime($(this).parent().text()).sort();
+    if (arraysEqual(eventSetting, eachEvent) &&
+        eventIndex !== $(this).parent().index()) {
+      $(this).prop('disabled', true);
+    }
+  }
+  console.log(eventSetting, $(this).parent().index());
+  $activities.each(checkForConflict);
+}
+
+function handlePaymentOptions() {
+  switch($creditMenu.val()) {
+    case 'credit card':
+      $paypal.hide();
+      $bitcoin.hide();
+      $creditCard.show();
+      break;
+    case 'paypal':
+      $creditCard.hide();
+      $bitcoin.hide();
+      $paypal.show();
+      break;
+    case 'bitcoin':
+      $paypal.hide();
+      $creditCard.hide();
+      $bitcoin.show();
+      break;
+    default:
+      break;
+  }
+}
+
 function initializePage() {
-    $('#name').focus();
+  $('#name').focus();
 
-    // ONLY BIND EVENTS HERE; MOVE FUNCITONS OUT OF INITIALIZEPAGE()
-    // event handlers
-    $('#title').on('change', function () {
-      if($('#title').val() === 'other' && $('#other-title').length === 0) {
-        appendOtherTitle();
-      } else {
-        removeOtherTitle();
-      }
-    });
+  // event handlers
+  $('#title').on('change', handleOtherJob);
+  $('#design').on('change', handleDesign );
 
-    $('#design').on('change', function () {
-      var dMenuVal = $('#design').val();
-      var $colorMenu = $('#color');
+  // don't allow overlapping events
+  $activities.on('change', handleEventConflicts);
 
-      if ( dMenuVal === 'js puns') {
-        $colorMenu.children().hide();
-        selectWithValue('cornflowerblue');
-        selectWithValue('darkslategrey');
-        selectWithValue('dimgrey');
-        $colorMenu.val('cornflowerblue');
-      } else if (dMenuVal === 'heart js') {
-        $colorMenu.children().hide();
-        selectWithValue('tomato');
-        selectWithValue('steelblue');
-        selectWithValue('dimgrey');
-        $colorMenu.val('tomato');
-      } else {
-        $colorMenu.children().show();
-      }
-    });
-    // CLEAN THIS UP, MOVE SELECTORS INTO VARIABLES FOR READABILITY
-    // don't allow overlapping events
-    var $activities = $('.activities input[type="checkbox"]');
-    $activities.on('change', function () {
-      // remember which event was clicked
-      var eventIndex = $(this).parent().index();
-      // grab day and time from event option
-      var eventSetting = getEventTime($(this).parent().text()).sort();
-      console.log(eventSetting, $(this).parent().index());
-      $activities.each(function () {
-        // if an event overlaps and this isnt the box that was clicked
-        var eachEvent = getEventTime($(this).parent().text()).sort();
-        if (arraysEqual(eventSetting, eachEvent) &&
-            eventIndex !== $(this).parent().index()) {
-          $(this).prop('disabled', true);
-        }
-      });
-    });
+  initializePayment();
 
-    initializePayment();
-
-    // payment menu
-    $creditMenu.on('change', function () {
-      switch($creditMenu.val()) {
-        case 'credit card':
-          $paypal.hide();
-          $bitcoin.hide();
-          $creditCard.show();
-          break;
-        case 'paypal':
-          $creditCard.hide();
-          $bitcoin.hide();
-          $paypal.show();
-          break;
-        case 'bitcoin':
-          $paypal.hide();
-          $creditCard.hide();
-          $bitcoin.show();
-          break;
-        default:
-          break;
-      }
-    });
+  // payment menu
+  $creditMenu.on('change', handlePaymentOptions);
 }
 
 initializePage();
