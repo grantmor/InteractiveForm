@@ -187,7 +187,18 @@ function validateActivities() {
 }
 
 function validatePayment() {
-
+  console.log($paymentMenu.val());
+  // REPLACE WITH QUERY OF STRING FROM HTML
+  var paymentPrompt = "I'm going to pay with: ";
+  var paymentError = ' Please select a payment method.';
+  var $payLabel = $paymentMenu.siblings('label[for="payment"]');
+  if ($paymentMenu.val() === 'select_method') {
+    $payLabel.text(paymentPrompt + paymentError);
+    $payLabel.css('color', 'darkred');
+  } else {
+    $payLabel.css('color', 'black');
+    $payLabel.text(paymentPrompt);
+  }
 }
 
 function validatePage(evt) {
