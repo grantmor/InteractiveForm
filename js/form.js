@@ -112,7 +112,6 @@ function handleEventConflicts() {
       $(this).prop('disabled', true);
     }
   }
-  console.log(eventSetting, $(this).parent().index());
   $activities.each(checkForConflict);
 }
 
@@ -178,27 +177,70 @@ function validateActivities() {
   $errorLabel.css('margin-bottom', '1.5em');
 
   if ($checkedBoxes.length < 1 && $('#activity-error').length < 1) {
-    console.log('no checked boxes');
     $('.activities legend:first').after($errorLabel);
   } else if ($checkedBoxes.length > 0){
-    console.log('one or more boxes checked');
     $('#activity-error').remove();
   }
 }
 
+function ccNumValid(ccNum) {
+
+}
+
+function zipValid(zip) {
+  var zipExp = /\b\d{5}\b/;
+  if (zipExp.test(zip)) return true;
+  else return false;
+}
+
+function cvvValid(cvv) {
+  var cvvExp = /\b\d{3}\b/;
+  if (cvvExp.test(cvv)) return true;
+  else return false;
+}
+
+// RENAME THIS!!!!!!!!!!!!!!!!!
+function redIfError ($field, isValid) {
+  var $fieldLabel = $field.prev();
+
+  if (isValid($field.val()))
+    $fieldLabel.css('color', 'black');
+  else
+    $fieldLabel.css('color', 'darkred');
+}
+
 function validatePayment() {
-  console.log($paymentMenu.val());
   // REPLACE WITH QUERY OF STRING FROM HTML
   var paymentPrompt = "I'm going to pay with: ";
   var paymentError = ' Please select a payment method.';
   var $payLabel = $paymentMenu.siblings('label[for="payment"]');
+
+  var $ccNum = $('#cc-num');
+  var $zip = $('#zip');
+  var $cvv = $('#cvv');
+  var $expMonth = $('#exp-month');
+  var $expYear = $('#exp-year');
+
+  // if payment option not selected
   if ($paymentMenu.val() === 'select_method') {
     $payLabel.text(paymentPrompt + paymentError);
     $payLabel.css('color', 'darkred');
   } else {
+    // if payment option is selected, remove error
     $payLabel.css('color', 'black');
     $payLabel.text(paymentPrompt);
   }
+  // if cc selected, validate cc fields
+  if ($paymentMenu.val() === 'credit card') {
+    console.log('ccn: ', ccNumValid( $ccNum.val() ));
+
+    redIfError($zip, zipValid);
+    redIfError($cvv, cvvValid);
+
+    //month
+    //year
+  }
+
 }
 
 function validatePage(evt) {
