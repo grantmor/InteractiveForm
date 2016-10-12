@@ -193,18 +193,14 @@ function toInt(char) {
   return parseInt(char);
 }
 
-function oddIndexByTwo (cur, index, arr) {
-  if ((index + 1) % 2 !== 0) {
-    return cur * 2;
-  } else {
-    return cur;
-  }
+function oddIndexByTwo (cur, index) {
+  if ((index + 1) % 2 !== 0) return cur * 2;
+  else return cur;
 }
 
 function makeUnderTen (digit) {
-  if (digit > 9) {
-    return (digit - 9);
-  } else return digit;
+  if (digit > 9) return (digit - 9);
+  else return digit;
 }
 
 function addTogether (prev, cur) {
@@ -228,7 +224,6 @@ function ccNumValid(ccNum) {
 
   if (testNumber % 10 === lastDig) return true;
   else return false;
-
 }
 
 function zipValid(zip) {
