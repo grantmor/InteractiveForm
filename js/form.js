@@ -8,10 +8,6 @@ var $bitcoin = $paypal.next();
 
 var $form = $('form');
 
-// disable browser form validation
-$form.attr('novalidate', 'novalidate');
-
-
 function appendOtherTitle() {
   var $text = $('<label for="other-title">Other title:</label>' +
                  '<input type="text" id="other-title"' +
@@ -72,6 +68,16 @@ function initializePayment() {
 function handleDesign() {
   var dMenuVal = $('#design').val();
   var $colorMenu = $('#color');
+
+  // hide color menu if design is not selected
+  if (dMenuVal !== 'js puns' && dMenuVal !== 'heart js') {
+    $colorMenu.hide();
+    $colorMenu.prev().hide();
+  } else {
+    $colorMenu.show();
+    $colorMenu.prev().show();
+  }
+
 
   if ( dMenuVal === 'js puns') {
     $colorMenu.children().hide();
@@ -308,6 +314,12 @@ function initializePage() {
   // form Validation
   $form.submit(validatePage);
 
+  // disable browser form validation
+  $form.attr('novalidate', 'novalidate');
+
+  // hide color menu by default
+  $('#color').hide();
+  $('#color').prev().hide();
 }
 
 initializePage();
