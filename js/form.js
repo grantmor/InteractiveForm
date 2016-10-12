@@ -183,7 +183,45 @@ function validateActivities() {
   }
 }
 
+function toInt(char) {
+  return parseInt(char);
+}
+
+function oddIndexByTwo (cur, index, arr) {
+  if ((index + 1) % 2 !== 0) {
+    return cur * 2;
+  } else {
+    return cur;
+  }
+}
+
+function makeUnderTen (digit) {
+  if (digit > 9) {
+    return (digit - 9);
+  } else return digit;
+}
+
+function addTogether (prev, cur) {
+  return prev + cur;
+}
+
+// Luhn Algorithm
 function ccNumValid(ccNum) {
+  var cardNumber = ccNum.trim().split('').map(toInt);
+  var lastDig = cardNumber.pop();
+
+  console.log('preop: ', cardNumber, lastDig);
+
+  var testNumber = cardNumber.reverse()
+                             .map(oddIndexByTwo)
+                             .map(makeUnderTen)
+                             .reduce(addTogether);
+
+
+  console.log( 'postop: ', testNumber, cardNumber, lastDig);
+
+  if (testNumber % 10 === lastDig) return true;
+  else return false;
 
 }
 
@@ -234,6 +272,7 @@ function validatePayment() {
   if ($paymentMenu.val() === 'credit card') {
     console.log('ccn: ', ccNumValid( $ccNum.val() ));
 
+    redIfError($ccNum, ccNumValid);
     redIfError($zip, zipValid);
     redIfError($cvv, cvvValid);
 
