@@ -106,16 +106,27 @@ function handleOtherJob() {
 
 function handleEventConflicts() {
   // remember which event was clicked
+  var clickedBox = $(this);
   var eventIndex = $(this).parent().index();
   // grab day and time from event option
   var eventSetting = getEventTime($(this).parent().text()).sort();
 
   function checkForConflict() {
-    // if an event overlaps and this isnt the box that was clicked
     var eachEvent = getEventTime($(this).parent().text()).sort();
-    if (arraysEqual(eventSetting, eachEvent) &&
+    // check to see if this box is already checked
+    console.log($(this));
+    if (clickedBox.is(':checked')) {
+      // if not, disable conflicting events
+      if (arraysEqual(eventSetting, eachEvent) &&
         eventIndex !== $(this).parent().index()) {
       $(this).prop('disabled', true);
+    }
+  } else {
+      // if so, enable conflicting events
+      if (arraysEqual(eventSetting, eachEvent) &&
+        eventIndex !== $(this).parent().index()) {
+        $(this).prop('disabled', false);
+      }
     }
   }
   $activities.each(checkForConflict);
