@@ -104,17 +104,55 @@ function handleOtherJob() {
   }
 }
 
-function handleEventConflicts() {
+function updateActivities() {
   // remember which event was clicked
   var clickedBox = $(this);
   var eventIndex = $(this).parent().index();
   // grab day and time from event option
   var eventSetting = getEventTime($(this).parent().text()).sort();
 
+  function accumulateTotal() {
+    var total = 0;
+    $activities.each(function(){
+      if($(this).is(':checked')) {
+        var text = $(this).parent().text();
+        var dollarSignPos = text.indexOf('$');
+        var amount = text.slice(dollarSignPos + 1, text.length);
+        console.log(amount);
+        total += parseInt(amount);
+        console.log(total);
+      }
+    });
+    return total;
+  }
+
+  function updateTotal() {
+    var total = 0;
+    var totalString = '$0';
+    var $totalLabel = $('<label id="total-cost">Total: $0</label>');
+
+    total = accumulateTotal();
+    totalString = 'Total: ' + '$' + total.toString();
+
+    // if total cost text is not present, add it
+    if($('#total-cost').length < 1) {
+      $('.activities').append($totalLabel);
+      // css for total text
+      $totalLabel.css('font-family', 'Roboto');
+      $totalLabel.css('font-size', '1.25em');
+      $totalLabel.css('font-weight', '500');
+      $totalLabel.css('color', '#184f68');
+      $totalLabel.css('display', 'block');
+
+    }
+
+    // update total string
+    $('#total-cost').text(totalString);
+  }
+
   function checkForConflict() {
     var eachEvent = getEventTime($(this).parent().text()).sort();
     // check to see if this box is already checked
-    console.log($(this));
     if (clickedBox.is(':checked')) {
       // if not, disable conflicting events
       if (arraysEqual(eventSetting, eachEvent) &&
@@ -130,6 +168,7 @@ function handleEventConflicts() {
     }
   }
   $activities.each(checkForConflict);
+  updateTotal();
 }
 
 function handlePaymentOptions() {
@@ -310,7 +349,7 @@ function initializePage() {
   $('#design').on('change', handleDesign );
 
   // don't allow overlapping events
-  $activities.on('change', handleEventConflicts);
+  $activities.on('change', updateActivities);
 
   initializePayment();
 
