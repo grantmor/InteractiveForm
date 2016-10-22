@@ -158,12 +158,15 @@ function updateActivities() {
       if (arraysEqual(eventSetting, eachEvent) &&
         eventIndex !== $(this).parent().index()) {
       $(this).prop('disabled', true);
+      // also gray out text
+      $(this).parent().css('color', 'gray');
     }
   } else {
       // if so, enable conflicting events
       if (arraysEqual(eventSetting, eachEvent) &&
         eventIndex !== $(this).parent().index()) {
         $(this).prop('disabled', false);
+        $(this).parent().css('color', 'black');
       }
     }
   }
@@ -222,7 +225,33 @@ function validateEmail() {
     $emailLabel.text('Email:');
     $emailLabel.css('color', 'black');
   }
+}
 
+function validateJobRole() {
+
+  var $error = $('<label id="title-error">Please enter a job role:</label>');
+  $error.css('color', 'darkred');
+  $error.css('margin-bottom', '1em');
+
+  if ($('#other-title').length > 0 && $('#other-title').val() === '') {
+    console.log('othertitle');
+    $('label[for="title"]').after($error);
+  } else {
+    $('#title-error').remove();
+  }
+}
+
+function validateShirt() {
+  var $error = $('<label id="tshirt-error">Please Select a design.</label>');
+  $error.css('color', 'darkred');
+  $error.css('margin-bottom', '1em');
+
+  if ($('#design').val() !== 'js puns' && $('#design').val() !== 'heart js') {
+    $('#tshirt-error').remove();
+    $('.shirt legend').after($error);
+  } else {
+    $('#tshirt-error').remove();
+  }
 }
 
 function validateActivities() {
@@ -259,18 +288,17 @@ function addTogether (prev, cur) {
 
 // Luhn Algorithm
 function ccNumValid(ccNum) {
+
+  if (ccNum.length < 1)
+    return false;
+
   var cardNumber = ccNum.trim().split('').map(toInt);
   var lastDig = cardNumber.pop();
-
-  console.log('preop: ', cardNumber, lastDig);
 
   var testNumber = cardNumber.reverse()
                              .map(oddIndexByTwo)
                              .map(makeUnderTen)
                              .reduce(addTogether);
-
-
-  console.log( 'postop: ', testNumber, cardNumber, lastDig);
 
   if (testNumber % 10 === lastDig) return true;
   else return false;
@@ -292,14 +320,15 @@ function cvvValid(cvv) {
 function redIfError ($field, isValid) {
   var $fieldLabel = $field.prev();
 
-  if (isValid($field.val()))
+  if (isValid($field.val()) && $field.val() !== '') {
+  console.log($field.val());
     $fieldLabel.css('color', 'black');
-  else
+  } else {
     $fieldLabel.css('color', 'darkred');
+  }
 }
 
 function validatePayment() {
-  // REPLACE WITH QUERY OF STRING FROM HTML
   var paymentPrompt = "I'm going to pay with: ";
   var paymentError = ' Please select a payment method.';
   var $payLabel = $paymentMenu.siblings('label[for="payment"]');
@@ -337,6 +366,8 @@ function validatePage(evt) {
   evt.preventDefault();
   validateName();
   validateEmail();
+  validateJobRole();
+  validateShirt();
   validateActivities();
   validatePayment();
 }
